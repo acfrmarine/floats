@@ -1,0 +1,36 @@
+<launch>
+    <!-- Start the thrusters-->
+    
+    <include file="$(find floatpi)/launch/dual_thrusters_diff.launch">
+        <arg name="cmd_topic_1" value="thruster_cmd_left"/>
+        <arg name="cmd_topic_2" value="thruster_cmd_right"/>
+        <arg name="thruster_direction_1" value="-1"/>
+        <arg name="thruster_direction_2" value="1"/>
+    </include> 
+
+    <!-- Start the PID -->
+    <node name="depth_pid" pkg="pid" type="controller" >
+       <param name="Kp" value="0.3" />
+       <param name="Ki" value="0.05" />
+       <param name="Kd" value="0.0" />
+       <param name="upper_limit" value="0.2" />
+       <param name="lower_limit" value="-0.2" />
+       <param name="windup_limit" value="3.0" />
+       <param name="max_loop_frequency" value="100.0" />
+       <param name="min_loop_frequency" value="2.0" />
+       <param name="setpoint_topic" value="depth_target"/>
+       <param name="topic_from_plant" value="depth"/>
+       <param name="topic_from_controller" value="thruster_cmd"/>
+    </node>
+
+    <!-- Start the static depth controller -->
+    <node name="controller" pkg="float_control" type="unified_controller.py">
+	<param name="use_lag_control" value="true"/>
+    </node>
+
+    <node name="heading_ctrl" pkg="float_control" type="heading_controller.py">
+	<param name="heading_kp" value="0.05"/>
+	<param name="max_offset" value="0.025"/>
+    </node>
+
+</launch>

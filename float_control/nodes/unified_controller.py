@@ -22,7 +22,6 @@ class UnifiedController:
 
         self.control_freq = rospy.get_param('~control_freq', 5.0)
         self.use_lag_control = rospy.get_param('~use_lag_control', False)
-        self.use_heading_control = rospy.get_param('~use_heading_control', False)
         self.ping_lag = rospy.get_param('~ping_lag', 2.0)  # Gets the ping lag, in seconds.
 
         self.thruster_set = 0.0
@@ -57,7 +56,6 @@ class UnifiedController:
 
         rospy.Subscriber("depth", Float64, self.depthCallback)
         rospy.Subscriber("ping", Range, self.pingCallback)
-        rospy.Subscriber("/navio/magnetic_field_cal", MagneticField, self.magCallback)
 
         rospy.Timer(rospy.Duration(1/self.control_freq), self.timerCallback)
 
@@ -161,10 +159,6 @@ class UnifiedController:
         self.altitude = msg.range
         self.new_altitude = True
         self.last_altitude_time = rospy.Time.now()
-
-    def magCallback(self, msg):
-        self.heading = math.atan2(msg.magnetic_field.x, msg.magnetic_field.z)
-        self.last_heading_time = rospy.Time.now()
 
     def calc_target_depth(self):
         # current_depth + current_altitude = target_depth + target_altitude
