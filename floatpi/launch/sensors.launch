@@ -4,7 +4,7 @@
 	<arg name="pressure" default="True"/>
 	<arg name="trigger" default="True"/>
 	<arg name="ups" default="True"/>
-	<arg name="ir_switch" default="True"/>	
+	<arg name="ir_switch" default="False"/>	
 	<arg name="altimeter" default="True"/>	
 	
 
@@ -13,9 +13,8 @@
 	</group>
 	
 	<group if="$(arg pressure)">
-		<node name="pressure" pkg="floatpi" type="pressure.py">
+		<node name="pressure" pkg="floatpi" type="pressure2.py">
 			<param name="fluid_density" value="1000"/>
-			<param name="depth_offset" value="0.22"/>
 		</node>
 	</group>
 	
@@ -40,7 +39,7 @@
 	</group>
 
 	<group if="$(arg altimeter)">
-		<node name="altimeter" pkg="floatpi" type="altimeter.py">
+		<node name="altimeter" pkg="floatpi" type="altimeter2.py">
 		</node>
 	</group>
 

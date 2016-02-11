@@ -80,6 +80,7 @@ class UnifiedController:
                 tgt_msg = Float64()
                 tgt_msg.data = self.depth_set
                 self.tgtDepthPub.publish(tgt_msg) # This goes to PID controller
+                self.no_sensor_count = 0
             else:
                 self.no_sensor_count += 1
                 if self.no_sensor_count > 5:
@@ -101,6 +102,7 @@ class UnifiedController:
                 tgt_msg = Float64()
                 tgt_msg.data = tgt_depth
                 self.tgtDepthPub.publish(tgt_msg) # This goes to PID controller
+                self.no_sensor_count = 0
             else:
                 self.no_sensor_count += 1
                 if self.no_sensor_count > 5:
@@ -126,14 +128,14 @@ class UnifiedController:
         self.time0 = rospy.Time.now()
         self.mode = 'depth'
         self.depth_set = req.depth_target
-        return SetDepthTargetResponse(False)
+        return SetDepthTargetResponse(True)
 
     def altitudeCmdServiceCallback(self, req):
         self.timeout = rospy.Duration(req.timeout)
         self.time0 = rospy.Time.now()
         self.mode = 'altitude'
         self.altitude_set = req.altitude_target
-        return SetAltitudeTargetResponse(False)
+        return SetAltitudeTargetResponse(True)
 
 
     def depthCallback(self, msg):
