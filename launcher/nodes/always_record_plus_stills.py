@@ -15,6 +15,9 @@ class RecordSwitch:
         self.dive_number = rospy.get_param("~initial_dive", 0)
         self.data_dir = rospy.get_param("~data_dir", "/media/data/")
         self.trip = rospy.get_param("~trip", "202001_Local")
+        self.flag_save_images = rospy.get_param("~save_images", True)
+        #self.image_encoding = rospy.get_param("~image_encoding", "bgr16")
+        self.image_encoding = "bgr8"
         self.recording = False
         self.switch_activated = False
 	self.activation_count = 0
@@ -41,7 +44,7 @@ class RecordSwitch:
             launch_end = '''\n</launch>'''
 
             record_part1 = '''<node name="recorder" pkg="rosbag" type="record" args="--split --duration=60 -o '''
-            save_path = os.path.join(self.data_dir, self.trip, "dive_"+str(self.dive_number),  "logs.bag")
+            save_path = os.path.join(self.data_dir, self.trip, "dive_"+str(self.dive_number), "bags",  "logs.bag")
             if not os.path.exists(os.path.dirname(save_path)):
                 os.makedirs(os.path.dirname(save_path))
             topic_list = ["/stereo/right/image_raw",
@@ -69,19 +72,46 @@ class RecordSwitch:
             topic_str = " ".join(topic_list)
             # Create the launch string
             record_str = record_part1 + save_path + " " + topic_str + "\"" + " />"
-            launch_str = launch_begin + record_str + launch_end
+
+            if self.flag_save_images:
+                save_image_path = os.path.join(self.data_dir, self.trip, "dive_"+str(self.dive_number), "stills",  "frame_%04i.png")
+                if not os.path.exists(os.path.dirname(save_image_path)):
+                    os.makedirs(os.path.dirname(save_image_path))
+
+                image_save_str = """
+                <node pkg="image_view" name="image_saver" type="extract_images">
+                    <param name="~filename_format" value="%s"/>
+                    <param name="~sec_per_frame" value="10.0"/>
+                    <!-- <param name="~encoding" value="%s"/> -->
+                    <remap from="image" to="/fisheye/image_color"/>
+                </node>
+                """ %(save_image_path, self.image_encoding)
+            else:
+                image_save_str = ""
+
+
+            launch_str = launch_begin + record_str + image_save_str + launch_end
             # Set the launch string
             self.launch.parent.roslaunch_strs = {launch_str}
             # Start the process
             self.launch.start()
 
             rospy.loginfo("Recording to %s" % save_path)
-            #log_msg = String()
-	    #log_msg.data = "Starting logs on dive %d" % self.dive_number
-	    #self.log_pub.publish(log_msg)
-	    
             # Set the recording state
             self.recording = True
+
+
+            save_image_path = os.path.join(self.data_dir, self.trip, "dive_"+str(self.dive_number), "stills",  "logs.bag")
+            if not os.path.exists(os.path.dirname(save_image_path)):
+                os.makedirs(os.path.dirname(save_image_path))
+
+            image_save_str = """
+            <node pkg="image_view" name="image_saver" type="image_saver">
+                <param name="~filename_format" value="%s"/>
+                <param name="~encoding" value="%s"/>
+            </node>
+            """ %(save_image_path, self.image_encoding)
+
 
         except BaseException as e:
             rospy.logerr("Failed to start log - %s" % e)

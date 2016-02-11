@@ -3,6 +3,7 @@
 import time
 import argparse
 import sys
+import numpy as np
 import rospy
 from std_msgs.msg import Float32, Float64, Bool
 from sensor_msgs.msg import Range
@@ -18,7 +19,9 @@ class UnifiedController:
         self.mode = 'thruster'  # Start off in thruster control mode
         self.timeout = rospy.Duration(0.0)
 
-        self.control_freq = rospy.get_param('control_freq', 5.0)
+        self.control_freq = rospy.get_param('~control_freq', 5.0)
+        self.use_lag_control = rospy.get_param('~use_lag_control', False)
+        self.ping_lag = rospy.get_param('~ping_lag', 2.0)  # Gets the ping lag, in seconds.
 
         self.thruster_set = 0.0
         self.depth_set = None
@@ -30,9 +33,13 @@ class UnifiedController:
         # These are for checking new sensor messages are being received
         self.new_depth = False
         self.new_altitude = False
-        self.last_altitude_time = 0.0
-        self.last_depth_time = 0.0
+        self.last_altitude_time = rospy.Time()
+        self.last_depth_time = rospy.Time()
         self.no_sensor_count = 0
+
+        # Calculating the 2s lag value
+        self.times_list = []
+        self.depths_list = []
 
         self.time0 = rospy.Time.now()
 
@@ -84,7 +91,7 @@ class UnifiedController:
             else:
                 self.no_sensor_count += 1
                 if self.no_sensor_count > 5:
-                    rospy.logwarn("Sensor readings not coming in - last_depth=%f, last_altitude=%f" %(rospy.Time.now() - self.last_depth_time, rospy.Time.now() - self.last_altitude_time))
+                    rospy.logwarn("Sensor readings not coming in - last_depth=%f, last_altitude=%f" %((rospy.Time.now() - self.last_depth_time).to_sec(), (rospy.Time.now() - self.last_altitude_time).to_sec()))
                     rospy.logwarn("Setting to 'thruster' mode with zero command")
                     self.mode = 'thruster'
                     self.thruster_set = 0.0
@@ -106,7 +113,7 @@ class UnifiedController:
             else:
                 self.no_sensor_count += 1
                 if self.no_sensor_count > 5:
-                    rospy.logwarn("Sensor readings not coming in - last_depth=%f, last_altitude=%f" %(rospy.Time.now() - self.last_depth_time, rospy.Time.now() - self.last_altitude_time))
+                    rospy.logwarn("Sensor readings not coming in - last_depth=%f, last_altitude=%f" %((rospy.Time.now() - self.last_depth_time).to_sec(), (rospy.Time.now() - self.last_altitude_time).to_sec()))
                     rospy.logwarn("Setting to 'thruster' mode with zero command")
                     self.mode = 'thruster'
                     self.thruster_set = 0.0
@@ -142,6 +149,9 @@ class UnifiedController:
         self.depth = msg.data
         self.new_depth = True
         self.last_depth_time = rospy.Time.now()
+        if self.use_lag_control:
+            self.depths_list.append(msg.data)
+            self.times_list.append(rospy.Time.now().to_sec())
 
     def pingCallback(self, msg):
         self.altitude = msg.range
@@ -165,7 +175,15 @@ class UnifiedController:
             rospy.logwarn("Altitude hasn't been received, error")
             return None
         else:
-            tgt_depth = self.depth + self.altitude - self.altitude_set
+            if self.use_lag_control:  # Tries to compensate for ping lag
+                # Finds the index of the lag depth measurement
+                idx_lag = np.abs(np.array(self.times_list) - rospy.Time.now().to_sec() + self.ping_lag).argmin()
+                # Gets the depth value at ping lag
+                depth_lag = self.depths_list[idx_lag]
+                # Calculates the target depth using this lag value
+                tgt_depth = depth_lag + self.altitude - self.altitude_set
+            else:
+                tgt_depth = self.depth + self.altitude - self.altitude_set
         return tgt_depth
 
 if __name__ == "__main__":

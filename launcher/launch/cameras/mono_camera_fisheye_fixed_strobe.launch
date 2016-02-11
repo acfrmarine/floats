@@ -46,7 +46,7 @@
 		-->
 		<param name="pixel_format" value="BayerGR12"/>
 		<!-- Exposure in us -->
-		<param name="exposure" value="1500"/>
+		<param name="exposure" value="2500"/>
 		<!-- Gain in dB -->
 		<param name="gain" value="10"/>
 
