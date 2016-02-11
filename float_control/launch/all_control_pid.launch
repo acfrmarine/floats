@@ -4,7 +4,7 @@
     <include file="$(find floatpi)/launch/dual_thrusters.launch">
         <arg name="cmd_topic_1" value="thruster_cmd"/>
         <arg name="cmd_topic_2" value="thruster_cmd"/>
-        <arg name="thruster_direction_1" value="1"/>
+        <arg name="thruster_direction_1" value="-1"/>
         <arg name="thruster_direction_2" value="1"/>
     </include>
 

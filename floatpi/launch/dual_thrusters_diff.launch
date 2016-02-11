@@ -1,7 +1,7 @@
 <launch>
-	<arg name="cmd_topic_1" default="thruster_cmd"/>
-	<arg name="cmd_topic_2" default="thruster_cmd"/>
-	<arg name="thruster_direction_1" default="-1"/>  <!-- Left is now CCW -->
+	<arg name="cmd_topic_1" default="thruster_cmd_left"/>
+	<arg name="cmd_topic_2" default="thruster_cmd_right"/>
+	<arg name="thruster_direction_1" default="-1"/>
 	<arg name="thruster_direction_2" default="1"/>
 
     <node name="thruster_1" pkg="floatpi" type="dual_thruster.py" output="screen">
