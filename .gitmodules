@@ -1,0 +1,9 @@
+[submodule "third_party/avt_vimba_camera"]
+	path = third_party/avt_vimba_camera
+	url = https://github.com/astuff/avt_vimba_camera.git
+[submodule "third_party/vision_opencv"]
+	path = third_party/vision_opencv
+	url = https://github.com/ros-perception/vision_opencv.git
+[submodule "third_party/rtimulib_ros"]
+	path = third_party/rtimulib_ros
+	url = https://github.com/romainreignier/rtimulib_ros.git
