@@ -1,0 +1,4 @@
+<launch>
+<node name="recorder" pkg="rosbag" type="record" args="--split --duration=60 -o /media/data/201911_LizardIsland/dive_0.bag /stereo/right/image_raw /stereo/right/camera_info /stereo/left/image_raw /stereo/left/camera_info /trigger /navio/gps /imu/data /navio/imu /depth /temperature /navio/ups /leak" />
+</launch>
+

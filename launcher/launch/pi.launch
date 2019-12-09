@@ -1,0 +1,25 @@
+<launch>
+	<include file="$(find d3_launcher)/launch/machine/pi_machine.launch"/>
+	<arg name="gps" default="True"/>
+	<arg name="imu" default="True"/>
+	<arg name="pressure" default="True"/>
+	<arg name="trigger" default="True"/>
+	
+	<group if="$(arg gps)">
+		<node name="gps" pkg="floatpi" type="gps.py" machine="pi"/>
+	</group>
+	
+	<group if="$(arg pressure)">
+		<node name="pressure" pkg="floatpi" type="pressure.py" machine="pi"/>
+	</group>
+	
+	<group if="$(arg imu)">
+		<node name="imu" pkg="floatpi" type="imu.py" machine="pi"/>
+	</group>
+	
+	
+	<group if="$(arg trigger)">
+		<node name="trigger" pkg="floatpi" type="trigger.py" machine="pi"/>
+	</group>
+
+</launch>

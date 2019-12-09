@@ -1,0 +1,8 @@
+<launch>
+	<machine name="pi"
+		address="172.16.154.90"
+		user="pi"
+		timeout="10"
+		password="raspberry"
+		env-loader="/home/pi/catkin_ws/envs/pi_remote_env.sh"/>
+</launch>

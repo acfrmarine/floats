@@ -1,0 +1,5 @@
+<launch>
+	<arg name="filepath" default="/home/nvidia/catkin_ws/bags/camera_recording.bag"/>
+	<node pkg="rosbag" type="record" name="record" args="/fisheye/image_raw /fisheye/camera_info /stereo/left/image_raw  /stereo/left/camera_info /stereo/right/image_raw /stereo/right/camera_info /trigger -o $(arg filepath)" output="screen">
+	</node>
+</launch>

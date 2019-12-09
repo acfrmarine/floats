@@ -1,0 +1,6 @@
+<launch>
+	<machine name="local"
+		address="localhost"
+		timeout="10"
+		env-loader="/home/$USER/catkin_ws/envs/local-env.sh"/>
+</launch>

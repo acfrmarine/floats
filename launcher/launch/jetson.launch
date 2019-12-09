@@ -1,0 +1,20 @@
+<launch>
+
+	<arg name="cameras" default="False"/>
+	<arg name="tx2_imu" default="True"/>
+	<arg name="vins_fusion" default="False"/>
+
+	<!-- Start the cameras -->
+	<group if="$(arg cameras)">
+		<include file="$(find avt_vimba_camera)/launch/stereo_camera_two_nodes_xtrig.launch"/>
+	</group>
+	
+	<!-- Start the IMU -->
+	<group if="$(arg tx2_imu)">
+		<include file="$(find rtimulib_ros)/launch/rtimulib_ros.launch"/>
+	</group>
+
+	<!-- TODO - vins funsion -->
+
+</launch>
+

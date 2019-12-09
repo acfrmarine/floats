@@ -1,0 +1,41 @@
+<launch>
+	<!-- TODO use pi args -->
+
+	<!-- Jetson Args -->
+	<arg name="cameras" default="False"/>
+	<arg name="tx2_imu" default="True"/>
+	<arg name="vins_fusion" default="False"/>
+	
+	<!-- PI args -->
+	<arg name="launch_pi" default="False"/>
+	<arg name="trigger" default="True"/>
+	<arg name="pressure" default="False"/>
+	<arg name="gps" default="False"/>
+	<arg name="leak" default="False"/>
+	<arg name="imu" default="False"/>
+	<arg name="thrusters" default="False"/>
+
+	<!-- Record args -->
+	<arg name="record_switch" default="True"/>
+
+	<include file="$(find d3_launcher)/launch/jetson.launch">
+		<arg name="cameras" value="$(arg cameras)"/>
+		<arg name="tx2_imu" value="$(arg tx2_imu)"/>
+		<arg name="vins_fusion" value="$(arg vins_fusion)"/>
+	</include>
+	
+	<group if="$(arg launch_pi)">
+		<include file="$(find d3_launcher)/launch/pi.launch">
+			<arg name="pressure" value="$(arg pressure)"/>
+			<arg name="gps" value="$(arg gps)"/>
+			<arg name="imu" value="$(arg imu)"/>
+			<arg name="trigger" value="$(arg trigger)"/>
+		</include>
+	</group>
+
+	<group if="$(arg record_switch)">
+		<node name="record_switch" pkg="d3_launcher" type="record_switch.py"/>
+	</group>
+
+</launch>
+
