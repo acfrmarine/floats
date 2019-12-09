@@ -1,0 +1,10 @@
+[Unit]
+Description=start roscore
+After=remote-fs.target
+After=syslog.target
+[Service]
+ExecStart=/usr/local/bin/ros_cameras.sh
+Restart=always
+RestartSec=60
+[Install]
+WantedBy=multi-user.target

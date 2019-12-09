@@ -1,0 +1,36 @@
+<launch>
+	<arg name="gps" default="True"/>
+	<arg name="imu" default="True"/>
+	<arg name="pressure" default="True"/>
+	<arg name="trigger" default="True"/>
+	<arg name="ups" default="True"/>
+	<arg name="ir_switch" default="True"/>	
+	<group if="$(arg gps)">
+		<node name="gps" pkg="floatpi" type="gps.py"/>
+	</group>
+	
+	<group if="$(arg pressure)">
+		<node name="pressure" pkg="floatpi" type="pressure.py"/>
+	</group>
+	
+	<group if="$(arg imu)">
+		<node name="imu" pkg="floatpi" type="imu.py"/>
+	</group>
+	
+	<group if="$(arg trigger)">
+		<node name="trigger" pkg="floatpi" type="trigger.py"/>
+	</group>
+
+	<group if="$(arg ups)">
+		<node name="ups" pkg="floatpi" type="ups.py"/>
+	</group>
+
+	<group if="$(arg ir_switch)">
+		<node name="ir_switch" pkg="floatpi" type="switch_servo.py">
+			<param name="~topic" value="/record_switch"/>
+		</node>
+	</group>
+
+
+</launch>
+
