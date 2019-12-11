@@ -1,0 +1,26 @@
+image_width: 1920
+image_height: 1440
+camera_name: right_optical
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [946.749666, 0.000000, 1062.808573,
+	0.000000, 958.964309, 996.804692,
+	0.000000, 0.000000, 1.000000]
+distortion_model: rational_polynomial
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.248509, 0.048547, -0.000035, 0.015011, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1.000000, 0.000000, 0.000000,
+	0.000000, 1.000000, 0.000000,
+	0.000000, 0.000000, 1.000000]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [691.216736, 0.000000, 1153.662259, 0.000000,
+	0.000000, 753.502258, 1070.506193, 0.000000,
+	0.000000, 0.000000, 1.000000, 0.000000]
