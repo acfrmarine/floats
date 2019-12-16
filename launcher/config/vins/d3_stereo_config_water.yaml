@@ -10,32 +10,37 @@ image0_topic: "/stereo/left/image_raw"
 image1_topic: "/stereo/right/image_raw"
 output_path: "/media/data/vins/output/"
 
-cam0_calib: "cam0_mei.yaml"
-cam1_calib: "cam1_mei.yaml"
+cam0_calib: "fisheye_vins_water.yaml"
+cam1_calib: "science_vins_water.yaml"
 image_width: 2464
 image_height: 2056
    
 
 # Extrinsic parameter between IMU and Camera.
-estimate_extrinsic: 0   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+estimate_extrinsic: 1   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
                         # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
+
+# d3 baseline = 108.58mm (from stereo cal + drawing)
+# offset_z from imu to cameras= -145mm (approx)
+# offset_x from imu to cameras= ??
+# offset_y form imu to cameras= ??
 
 body_T_cam0: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [0.0, 0.0, 1.0, 0.0,
+   data: [0.0, 0.0, 1.0, 0.050427,
            0.0, 1.0, 0.0,  0.0,
-           -1.0, 0.0, 0.0, 0.0,
+           -1.0, 0.0, 0.0, -0.145,
            0, 0, 0, 1]
 
 body_T_cam1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [0.0, 0.0, 1.0, 0.0,
+   data: [0.0, 0.0, 1.0, -0.050427,
            0.0, 1.0, 0.0, 0.0,
-           -1.0, 0.0, 0.0, 0.0,
+           -1.0, 0.0, 0.0, -0.145,
            0, 0, 0, 1]
 
 #Multiple thread support

@@ -22,9 +22,8 @@ class RecordSwitch:
         self.change_mode_flag = False
 	self.log_pub = rospy.Publisher('logs', String, queue_size=1)
 	self.rec_pub = rospy.Publisher('recording', Bool, queue_size=1)
-
-
-        rospy.Subscriber('switch', Bool, self.switchCallback)
+        #rospy.Subscriber('switch', Bool, self.switchCallback)
+	self.start_recording()
 
     def start_recording(self):
         """Starts recording. Creates a roslaunch xml string and launches it.
@@ -50,7 +49,7 @@ class RecordSwitch:
                           "/stereo/left/image_raw",
                           "/stereo/left/camera_info",
 			  "/fisheye/image_raw",
-                          "/fisheye/camera_info",
+			  "/fisheye/camera_info",
                           "/trigger",
                           "/navio/gps",
                           "/imu/data",
@@ -148,6 +147,6 @@ if __name__ == '__main__':
     rs = RecordSwitch()
     # Need to run a while loop here to ensure rs.change_mode() is called from the main thread
     while not rospy.is_shutdown():
-        rs.change_mode()
+        #rs.change_mode()
 	rs.publish_state()
         r.sleep()
