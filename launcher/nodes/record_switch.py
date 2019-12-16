@@ -14,7 +14,7 @@ class RecordSwitch:
     def __init__(self):
         self.dive_number = rospy.get_param("~initial_dive", 0)
         self.data_dir = rospy.get_param("~data_dir", "/media/data/")
-        self.trip = rospy.get_param("~trip", "201911_LizardIsland")
+        self.trip = rospy.get_param("~trip", "202001_Local")
         self.recording = False
         self.switch_activated = False
 	self.activation_count = 0

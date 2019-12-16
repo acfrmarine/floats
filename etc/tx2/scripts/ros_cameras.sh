@@ -7,4 +7,4 @@ source /opt/ros/kinetic/setup.bash
 source /home/nvidia/catkin_ws/devel/setup.bash
 export ROS_IP=172.16.154.89
 export ROS_MASTER_URI=http://172.16.154.89:11311
-roslaunch avt_vimba_camera stereo_camera_two_nodes_xtrig.launch
+roslaunch launcher stereo_camera_two_nodes_xtrig.launch
