@@ -29,7 +29,7 @@ if __name__ == "__main__":
         for li in lines:
             if "battery.capacity" in li:
                 bsmsg.capacity = float(li.split(' ')[-1])
-            elif "battery.charge" in li:
+            elif "battery.charge" in li and not 'warning' in li and not 'low' in li:
                 bsmsg.charge = float(li.split(' ')[-1])
             elif "battery.current" in li:
                 bsmsg.current = float(li.split(' ')[-1])
