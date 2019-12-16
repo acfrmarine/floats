@@ -1,0 +1,96 @@
+<launch>
+
+	<group ns="fisheye">
+		<node name="image_proc" pkg="image_proc" type="image_proc"/>
+	</group>
+
+	<node name="fisheye" pkg="avt_vimba_camera" type="mono_camera_node" output="screen">
+		<param name="guid" value="50-0536933820"/>
+		<param name="ip" value="172.16.154.173"/>
+		<!-- <param name="camera_info_url" value="file://$(find avt_vimba_camera)/calibrations/calibration_50-0536933820.yaml"/> -->
+		<param name="frame_id" value="right_optical"/>
+		<param name="trig_timestamp_topic" value=""/>
+		<param name="show_debug_prints" value="true"/>
+
+		<!-- Trigger mode:
+			1. Freerun
+			2. SyncIn1
+			3. SyncIn2
+			4. SyncIn3
+			5. SyncIn4
+			6. FixedRate
+			7. Software
+		-->
+		<param name="trigger_source" value="FixedRate"/>
+
+		<!-- Acquisition mode:
+			1. Continuous
+			2. SingleFrame
+			3. MultiFrame
+			4. Recorder
+		-->
+		<param name="acquisition_mode" value="Continuous"/>
+
+		<!-- Acquisition rate in fps -->
+		<param name="acquisition_rate" value="8"/>
+
+		<!-- Pixel format:
+			1. Mono8
+			2. Mono12
+			3. Mono12Packed
+			4. BayerRG8
+			5. BayerRG12Packed
+			6. BayerGR12
+			7. RGB8Packed
+			8. BGR8Packed
+		-->
+		<param name="pixel_format" value="BayerGR12"/>
+		<!-- Exposure in us -->
+		<param name="exposure" value="20138"/>
+		<!-- Gain in dB -->
+		<param name="gain" value="10"/>
+
+		<!-- Auto control
+			1. Off
+			2. Once
+			3. Continuous
+		-->
+		<param name="exposure_auto" value="On"/>
+		<param name="gain_auto" value="On"/>
+		<param name="whitebalance_auto" value="Off"/>
+
+		<param name="binning_x" value="1"/>
+		<param name="binning_y" value="1"/>
+		<param name="decimation_x" value="1"/>
+		<param name="decimation_y" value="1"/>
+		<param name="x_offset" value="0"/>
+		<param name="y_offset" value="0"/>
+		<param name="width" value="2464"/>
+		<param name="height" value="2056"/>
+
+		<param name="exposure_auto_max" value="30000"/>
+                <param name="exposure_auto_min" value="100"/>
+                <param name="exposure_auto_target" value="10"/>
+                <param name="gain_auto_target" value="10"/>
+                <param name="gain_auto_max" value="10"/>
+
+		<!-- <param name="stream_bytes_per_second" value="45000000"/> -->
+	</node>
+	
+	<node pkg="nodelet" type="nodelet" args="standalone image_proc/crop_decimate" name="decimate">
+	  <param name="x_offset" type="int" value="0" />
+	  <param name="y_offset" type="int" value="0" />
+	  <param name="width" type="int" value="0" />
+	  <param name="height" type="int" value="0" />
+	  <param name="decimation_x" value="8" />
+	  <param name="decimation_y" value="8" />
+
+	  <!-- remap input topics -->
+	  <remap from="camera/image_raw" to="/fisheye/image_raw"/>
+	  <remap from="camera/image_info" to="/fisheye/camera_info"/>
+	  <!-- remap output topics -->
+	  <remap from="camera_out/image_raw" to="/image_small"/>
+	  <remap from="camera_out/image_info" to="/image_small_info"/>
+	</node>
+
+</launch>
