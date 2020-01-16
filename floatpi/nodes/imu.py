@@ -67,10 +67,10 @@ if __name__ == "__main__":
         imu_msg.header.seq = count
         imu_msg.orientation_covariance = [-1,0,0,0,0,0,0,0,0]  # Set invalid
         imu_msg.angular_velocity.x = m9g[1]
-        imu_msg.angular_velocity.y = -m9g[0]
+        imu_msg.angular_velocity.y = m9g[0]
         imu_msg.angular_velocity.z = -m9g[2]
         imu_msg.linear_acceleration.x = m9a[1]
-        imu_msg.linear_acceleration.y = -m9a[0]
+        imu_msg.linear_acceleration.y = m9a[0]
         imu_msg.linear_acceleration.z = -m9a[2]
         imu_pub.publish(imu_msg)
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         mag_msg.header.frame_id = 'imu'
         mag_msg.header.seq = count
         mag_msg.magnetic_field.x = m9m[1]  # TODO Check NED, ENU
-        mag_msg.magnetic_field.y = -m9m[0]
+        mag_msg.magnetic_field.y = m9m[0]
         mag_msg.magnetic_field.z = -m9m[2]
         mag_pub.publish(mag_msg)
 
