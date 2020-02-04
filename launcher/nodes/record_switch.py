@@ -53,6 +53,7 @@ class RecordSwitch:
                           "/fisheye/camera_info",
                           "/trigger",
                           "/navio/gps",
+                          "/navio/magnetic_field",
                           "/imu/data",
                           "/navio/imu",
                           "/depth",
