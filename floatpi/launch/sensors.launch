@@ -18,7 +18,9 @@
 	</group>
 	
 	<group if="$(arg trigger)">
-		<node name="trigger" pkg="floatpi" type="trigger.py"/>
+		<node name="trigger" pkg="floatpi" type="trigger.py">
+			<param name="trigger_rate" value="6"/>
+		</node>
 	</group>
 
 	<group if="$(arg ups)">
