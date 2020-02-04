@@ -32,7 +32,7 @@
 		<param name="acquisition_mode" value="Continuous"/>
 
 		<!-- Acquisition rate in fps -->
-		<param name="acquisition_rate" value="8"/>
+		<param name="acquisition_rate" value="14"/>
 
 		<!-- Pixel format:
 			1. Mono8
@@ -74,7 +74,7 @@
                 <param name="gain_auto_target" value="10"/>
                 <param name="gain_auto_max" value="10"/>
 
-		<!-- <param name="stream_bytes_per_second" value="45000000"/> -->
+		<!-- <param name="stream_bytes_per_second" value="90000000"/> -->
 	</node>
 	
 	<node pkg="nodelet" type="nodelet" args="standalone image_proc/crop_decimate" name="decimate">
