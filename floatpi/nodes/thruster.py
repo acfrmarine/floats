@@ -2,7 +2,7 @@
 
 import rospy
 from std_msgs.msg import Float32
-import navio.pwm
+import navio2.pwm
 
 
 class Thruster:
@@ -30,7 +30,7 @@ class Thruster:
 
         pwm_id_ = rospy.get_param("~pwm_id", 0)
 
-        self.pwm_ = navio.pwm.PWM(pwm_id_)
+        self.pwm_ = navio2.pwm.PWM(pwm_id_)
 
         self.pwm_.initialize()
         self.pwm_.set_period(50);
@@ -38,6 +38,7 @@ class Thruster:
         self.prime_esc()
 
         self.cmd_ = 0.0
+        self.last_received_cmd_ = rospy.Time.now()
 
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
         rospy.Timer(rospy.Duration(self.timeout_), self.timerCallback)
@@ -131,5 +132,6 @@ if __name__ == "__main__":
     thruster = Thruster()
     def shutdown_hook():
         thruster.shutdown()
+    rospy.on_shutdown(shutdown_hook)
     rospy.spin()
 
