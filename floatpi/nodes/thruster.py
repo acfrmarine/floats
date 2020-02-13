@@ -66,7 +66,7 @@ class Thruster:
         """
         if rospy.Time.now() - self.last_received_cmd_ > rospy.Duration(self.timeout_):
             self.setPWM(self.scale_input(0.0)) # Stop motor
-            rospy.loginfo("Timeout hit - turning thruster off")
+            rospy.logwarn("Timeout hit - turning thruster off")
         self.go = False
 
     def scale_input(self, value):
@@ -95,18 +95,18 @@ class Thruster:
         """
         # perform a priming sequence, by setting to zero, 0.5, 0 for some time.
         rospy.loginfo("Performing priming sequence")
-        rate=rospy.Rate(1000)
-        for i in range(2000):
-            self.setPWM((self.time_max_+self.time_min_)/2.0)
-            rate.sleep()
+        rate=rospy.Rate(50)
+        #for i in range(100):
+        self.setPWM((self.time_max_+self.time_min_)/2.0)
+        rate.sleep()
 
-        for i in range(2000):
-            self.setPWM((self.time_max_*1.5+self.time_min_*0.5)/2.0)
-            rate.sleep()
+        #for i in range(100):
+        self.setPWM((self.time_max_*1.5+self.time_min_*0.5)/2.0)
+        rate.sleep()
 
-        for i in range(2000):
-            self.setPWM((self.time_max_+self.time_min_)/2.0)
-            rate.sleep()
+        #for i in range(100):
+        self.setPWM((self.time_max_+self.time_min_)/2.0)
+        rate.sleep()
         #priming done!
         rospy.loginfo("Priming Done!")
         self.primed = True
