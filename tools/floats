@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -e
+
+SERVICE=$1
+OPERATION=$2
+
+usage()
+{
+  echo "Usage: floats SERVICE OPERATION"
+  echo "Available services depends on platform, machine, e.g.: ros_cameras, ros_screen, ros_sensors, ros_record, float_control"
+  echo "Available operations are the systemctl operations: start,stop,status,enable,disable..."
+}
+
+# Ensure platform has been given
+if test -z "$SERVICE"; then
+  usage
+  exit
+fi
+
+# Ensure platform has been given
+if test -z "$OPERATION"; then
+  usage
+  exit
+fi
+
+sudo systemctl $OPERATION $SERVICE
