@@ -40,9 +40,13 @@ cd src/floats
 sudo ./install_services.sh tx2 --enable
 ```
 
+To run the commands without using sudo, create a float group, and add the user to it. Need to logout and log back in for changes to work:
+```bash
+sudo groupadd float
+sudo usermod -a -G float $USER
+```
 
-## Running
-
+## Services
 After the services have been installed (and optionally enabled), the following services exist:
 - ros_d3: (tx2) Starts up all the core ROS nodes.
 - ros_cameras: (tx2) Starts the AVT cameras.
@@ -57,11 +61,27 @@ Each of the services can be controlled using systemctl, where the following oper
 - enable: Enables the system on startup
 - disable: Disables the system on startup
 
+## Running using floats
+
+The 'floats' script can be used as an interface to the systemctl services.
+
+The interface is as follows:
+```bash
+floats SERVICE OPERATION
+```
+Where:
+- SERVICE: The service you are going to be controlling, e.g. ros_cameras
+- OPERATION: The operation you are doing, e.g. start,stop,status,enable,disable
+
+## Running using systemctl
+To control the services with systemctl
+
 For format for these commands is:
 ```bash
 sudo systemctl OPERATION SERVICE
 ```
-For exmample to start the cameras on the tx2:
+For example to start the cameras on the tx2:
 ```bash
 sudo systemctl start ros_cameras
 ```
+
