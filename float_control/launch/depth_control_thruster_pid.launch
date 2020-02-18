@@ -25,4 +25,9 @@
        <param name="topic_from_controller" value="thruster_cmd"/>
     </node>
 
+    <!-- Start the static depth controller -->
+    <node name="depth_commander" pkg="float_control" type="static_depth.py">
+    </node>
+    <!-- Use static_depth by setting parameter set_target_depth... -->
+
 </launch>
