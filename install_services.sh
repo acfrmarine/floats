@@ -25,6 +25,8 @@ fi
 
 if [ "$3" == "--enable" ]; then
   ENABLE=true
+  echo "--enable disabled during development, please enable manually (due to conflicting services e.g. depth_control and thruster_control)"
+  ENABLE=false
 else
   ENABLE=false
 fi
