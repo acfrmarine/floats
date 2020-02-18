@@ -3,7 +3,7 @@
 import rospy
 from std_msgs.msg import Float32
 import navio2.pwm
-
+import numpy as np
 
 class Thruster:
     """
@@ -24,25 +24,29 @@ class Thruster:
         self.pwm_min_ = rospy.get_param("~val_min",-1.0)
         self.time_max_ = rospy.get_param("~time_max",2.00)# in ms
         self.time_min_ = rospy.get_param("~time_min",1.00)
-        self.prime_required_ = rospy.get_param("~prime",False)
+        self.prime_required_ = rospy.get_param("~prime",True)
 
         self.timeout_ = rospy.get_param("~timeout", 2.0)
+        control_cmd_topic = rospy.get_param("~control_cmd_topic", "thruster_cmd")  # Sometimes easier doing this than remapping
 
         pwm_id_ = rospy.get_param("~pwm_id", 0)
 
         self.pwm_ = navio2.pwm.PWM(pwm_id_)
 
+        self.direction_ = np.sign(rospy.get_param("~thruster_direction", 1))
+
         self.pwm_.initialize()
         self.pwm_.set_period(50);
         self.pwm_.enable()
-        self.prime_esc()
+        if self.prime_required_:
+            self.prime_esc()
 
         self.cmd_ = 0.0
         self.last_received_cmd_ = rospy.Time.now()
 
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
         rospy.Timer(rospy.Duration(self.timeout_), self.timerCallback)
-        rospy.Subscriber("thruster_cmd", Float32, self.cmdCallback)
+        rospy.Subscriber(control_cmd_topic, Float32, self.cmdCallback)
 
     def cmdCallback(self, msg):
         """
@@ -54,7 +58,7 @@ class Thruster:
         self.cmd_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
-            self.setPWM(self.scale_input(self.cmd_))
+            self.setPWM(self.scale_input(self.direction_ * self.cmd_))
 
 
     def timerCallback(self, event):

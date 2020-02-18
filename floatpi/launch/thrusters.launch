@@ -1,0 +1,43 @@
+<launch>
+	<arg name="thruster_1" default="True"/>
+	<arg name="thruster_2" default="True"/>
+	<arg name="thruster_3" default="False"/>
+	<arg name="cmd_topic_1" default="thruster_cmd"/>
+	<arg name="cmd_topic_2" default="thruster_cmd"/>
+	<arg name="cmd_topic_3" default="thruster_cmd"/>
+	<arg name="thruster_direction_1" default="1"/>
+	<arg name="thruster_direction_2" default="1"/>
+	<arg name="thruster_direction_3" default="1"/>
+
+	<group if="$(arg thruster_1)">
+	    <group ns="thruster_1">
+	        <node name="thruster_1" pkg="floatpi" type="thruster.py">
+	            <param name="pwm_id" value="1"/>
+	            <param name="control_cmd_topic" value="$(arg cmd_topic_1)"/>
+	            <param name="thruster_direction" value="$(arg thruster_direction_1)"/>
+	        </node>
+	    </group>
+	</group>
+
+    <group if="$(arg thruster_2)">
+	    <group ns="thruster_2">
+	        <node name="thruster_2" pkg="floatpi" type="thruster.py">
+	            <param name="pwm_id" value="2"/>
+	            <param name="control_cmd_topic" value="$(arg cmd_topic_2)"/>
+                <param name="thruster_direction" value="$(arg thruster_direction_2)"/>
+	        </node>
+	    </group>
+	</group>
+
+    <group if="$(arg thruster_3)">
+	    <group ns="thruster_3">
+	        <node name="thruster_3" pkg="floatpi" type="thruster.py">
+	            <param name="pwm_id" value="3">
+	            <param name="control_cmd_topic" value="$(arg cmd_topic_3)">
+                <param name="thruster_direction" value="$(arg thruster_direction_3)"/>
+	        </node>
+	    </group>
+	</group>
+
+</launch>
+
