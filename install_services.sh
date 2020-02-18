@@ -34,7 +34,7 @@ operations="start stop enable disable status"
 
 # Install
 for service in $(ls etc/$PLATFORM/$MACHINE/services); do
-  sudo cp etc/$PLATFORM/$MACHINE/$service /etc/systemd/system
+  sudo cp etc/$PLATFORM/$MACHINE/services/$service /etc/systemd/system
   # Enable without sudo
   for op in $operations; do
     sudo echo "%float ALL=NOPASSWD: /bin/systemctl $op $service" >> /etc/sudoers.d/floats
@@ -46,10 +46,12 @@ sudo systemctl daemon-reload
 for script in $(ls etc/$PLATFORM/$MACHINE/scripts); do
   if [[ "$script" == *_user.sh ]]; then
      # Copy the scripts to ~/
-     cp etc/$PLATFORM/$MACHINE/$script ~/
+     cp etc/$PLATFORM/$MACHINE/scripts/$script ~/
+     chmod +x ~/$script
   else
      # Copy the script to /usr/local/bin
-     sudo cp etc/$PLATFORM/$MACHINE/$script /usr/local/bin/
+     sudo cp etc/$PLATFORM/$MACHINE/scripts/$script /usr/local/bin/
+     sudo chmod +x /usr/local/bin/$script
   fi
 done
 
@@ -62,3 +64,4 @@ fi
 
 
 sudo cp tools/floats /usr/local/bin/
+sudo chmod +x /usr/local/bin/floats

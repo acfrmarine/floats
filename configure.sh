@@ -7,7 +7,7 @@ TX2_UNUSED="third_party/vision_opencv floatpi"
 PI_UNUSED="third_party/avt_vimba_camera third_party/rtimulib_ros third_party/VINS-Fusion"
 COMMON_UNUSED="third_party/vision_opencv"
 D3_UNUSED="float_control"
-
+FLOATV1_UNUSED=""
 
 usage()
 {
@@ -46,9 +46,9 @@ else
 fi
 
 if [ "$PLATFORM" = "d3" ]; then
-    UNUSED_PACKAGES="$UNUSED_PACKAGES" "$D3_UNUSED"
+    UNUSED_PACKAGES="$UNUSED_PACKAGES $D3_UNUSED"
 elif [ "$PLATFORM" = "floatv1" ]; then
-    UNUSED_PACKAGES="$UNUSED_PACKAGES" "$FLOATV1_UNUSED"
+    UNUSED_PACKAGES="$UNUSED_PACKAGES $FLOATV1_UNUSED"
 else
     echo "platform $PLATFORM not supported."
 fi
