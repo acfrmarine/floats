@@ -1,0 +1,17 @@
+<launch>
+	<arg name="cmd_topic_1" default="thruster_cmd"/>
+	<arg name="cmd_topic_2" default="thruster_cmd"/>
+	<arg name="thruster_direction_1" default="1"/>
+	<arg name="thruster_direction_2" default="1"/>
+
+    <node name="thruster_1" pkg="floatpi" type="dual_thruster.py" output="screen">
+	            <param name="~pwm_id0" value="0"/>
+	            <param name="~pwm_id1" value="1"/>
+	            <param name="~control_cmd_topic0" value="$(arg cmd_topic_1)"/>
+	            <param name="~control_cmd_topic1" value="$(arg cmd_topic_2)"/>
+	            <param name="~thruster_direction0" value="$(arg thruster_direction_1)"/>
+	            <param name="~thruster_direction1" value="$(arg thruster_direction_2)"/>
+    </node>
+
+</launch>
+
