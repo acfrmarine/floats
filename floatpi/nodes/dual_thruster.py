@@ -25,8 +25,8 @@ class Thruster:
         self.prime_required_ = rospy.get_param("~prime",True)
 
         self.timeout_ = rospy.get_param("~timeout", 2.0)
-        control_cmd_topic0 = rospy.get_param("~control_cmd_topic_0", "thruster0_cmd")  # Sometimes easier doing this than remapping
-        control_cmd_topic1 = rospy.get_param("~control_cmd_topic_1", "thruster1_cmd")  # Sometimes easier doing this than remapping
+        control_cmd_topic0 = rospy.get_param("~control_cmd_topic0", "thruster0_cmd")  # Sometimes easier doing this than remapping
+        control_cmd_topic1 = rospy.get_param("~control_cmd_topic1", "thruster1_cmd")  # Sometimes easier doing this than remapping
 
         pwm_id0_ = rospy.get_param("~pwm_id0", 0)
         pwm_id1_ = rospy.get_param("~pwm_id1", 0)
@@ -57,7 +57,7 @@ class Thruster:
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
         rospy.Timer(rospy.Duration(self.timeout_), self.timerCallback)
         rospy.Subscriber(control_cmd_topic0, Float32, self.cmd0Callback)
-        rospy.Subscriber(control_cmd_topic0, Float32, self.cmd1Callback)
+        rospy.Subscriber(control_cmd_topic1, Float32, self.cmd1Callback)
 
     def cmd0Callback(self, msg):
         """
