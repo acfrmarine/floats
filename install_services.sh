@@ -33,6 +33,7 @@ fi
 
 
 operations="start stop enable disable status"
+sudo rm /etc/sudoers.d/floats
 
 # Install
 for service in $(ls etc/$PLATFORM/$MACHINE/services); do

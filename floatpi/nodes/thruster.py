@@ -30,7 +30,7 @@ class Thruster:
         control_cmd_topic = rospy.get_param("~control_cmd_topic", "thruster_cmd")  # Sometimes easier doing this than remapping
 
         pwm_id_ = rospy.get_param("~pwm_id", 0)
-
+        rospy.loginfo("Setting PWM ID %d" %pwm_id_)
         self.pwm_ = navio2.pwm.PWM(pwm_id_)
 
         self.direction_ = np.sign(rospy.get_param("~thruster_direction", 1))
@@ -59,7 +59,7 @@ class Thruster:
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
             self.setPWM(self.scale_input(self.direction_ * self.cmd_))
-
+        rospy.loginfo("Setting command %f" %msg.data)
 
     def timerCallback(self, event):
         """
