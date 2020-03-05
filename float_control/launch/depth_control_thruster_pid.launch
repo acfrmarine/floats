@@ -1,18 +1,16 @@
 <launch>
     <!-- Start the thrusters-->
-    <include file="$(find floatpi)/launch/thrusters.launch">
-        <arg name="thruster_1" value="true"/>
-        <arg name="thruster_2" value="true"/>
-        <arg name="thruster_3" value="false"/>
+    
+    <include file="$(find floatpi)/launch/dual_thrusters.launch">
         <arg name="cmd_topic_1" value="thruster_cmd"/>
         <arg name="cmd_topic_2" value="thruster_cmd"/>
-        <arg name="thruster_direction_1" value="1">
-        <arg name="thruster_direction_2" value="1">
+        <arg name="thruster_direction_1" value="-1"/>
+        <arg name="thruster_direction_2" value="-1"/>
     </include>
 
     <!-- Start the PID -->
     <node name="depth_pid" pkg="pid" type="controller" >
-       <param name="Kp" value="0.1" />
+       <param name="Kp" value="0.2" />
        <param name="Ki" value="0.0" />
        <param name="Kd" value="0.0" />
        <param name="upper_limit" value="1.0" />

@@ -3,7 +3,7 @@ import ms5837
 import time
 import rospy
 from sensor_msgs.msg import Temperature, FluidPressure
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Float64
 from geometry_msgs.msg import Vector3Stamped
 
 
@@ -11,7 +11,8 @@ from geometry_msgs.msg import Vector3Stamped
 if __name__ == "__main__":
     rospy.init_node('pressure_sensor_node')
     fluid_pub = rospy.Publisher('fluid', FluidPressure, queue_size=1)
-    depth_pub = rospy.Publisher('depth', Vector3Stamped, queue_size=1)
+    depth_stamped_pub = rospy.Publisher('depth_stamped', Vector3Stamped, queue_size=1)
+    depth_pub = rospy.Publisher('depth', Float64, queue_size=1)
     temp_pub = rospy.Publisher('temperature', Temperature, queue_size=1)
 
     sensor = ms5837.MS5837_30BA() # Default I2C bus is 1 (Raspberry Pi 3)
@@ -26,6 +27,7 @@ if __name__ == "__main__":
         exit(1)
 
     fluid_density = rospy.get_param('fluid_density', 1028)
+    fluid_density = rospy.get_param('fluid_density', 1000)
 
     r = rospy.Rate(10) # 10hz
     count = 0
@@ -42,11 +44,15 @@ if __name__ == "__main__":
             pressure_msg.fluid_pressure = pressure
             fluid_pub.publish(pressure_msg)
 
-            depth_msg = Vector3Stamped()
-            depth_msg.header.frame_id = 'pressure_sensor'
-            depth_msg.header.seq = count
-            depth_msg.header.stamp = rospy.Time.now() #TODO fix this
-            depth_msg.vector.z = depth  # TODO this
+            depth_stamped_msg = Vector3Stamped()
+            depth_stamped_msg.header.frame_id = 'pressure_sensor'
+            depth_stamped_msg.header.seq = count
+            depth_stamped_msg.header.stamp = rospy.Time.now() #TODO fix this
+            depth_stamped_msg.vector.z = depth  # TODO this
+            depth_stamped_pub.publish(depth_stamped_msg)
+
+            depth_msg = Float64()
+            depth_msg.data = depth
             depth_pub.publish(depth_msg)
 
             temp_msg = Temperature()

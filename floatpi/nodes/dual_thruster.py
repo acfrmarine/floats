@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Float64
 import navio2.pwm
 import numpy as np
 
@@ -38,6 +38,9 @@ class Thruster:
         self.direction0_ = np.sign(rospy.get_param("~thruster_direction0", 1))
         self.direction1_ = np.sign(rospy.get_param("~thruster_direction1", 1))
 
+        rospy.loginfo("Thruster 0 direction set to %d" %self.direction0_)
+        rospy.loginfo("Thruster 1 direction set to %d" %self.direction1_)
+
         self.pwm0_.initialize()
         self.pwm0_.set_period(50);
         self.pwm0_.enable()
@@ -56,8 +59,8 @@ class Thruster:
 
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
         rospy.Timer(rospy.Duration(self.timeout_), self.timerCallback)
-        rospy.Subscriber(control_cmd_topic0, Float32, self.cmd0Callback)
-        rospy.Subscriber(control_cmd_topic1, Float32, self.cmd1Callback)
+        rospy.Subscriber(control_cmd_topic0, Float64, self.cmd0Callback)
+        rospy.Subscriber(control_cmd_topic1, Float64, self.cmd1Callback)
 
     def cmd0Callback(self, msg):
         """
@@ -69,8 +72,8 @@ class Thruster:
         self.cmd0_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
-            self.setPWM0(self.scale_input(self.direction0_ * self.cmd0_))
-        rospy.loginfo("Setting command %f" %msg.data)
+            self.setPWM0(self.scale_input(float(self.direction0_) * self.cmd0_))
+        rospy.loginfo("Setting command %f" % float(self.direction0_ * self.cmd0_))
 
     def cmd1Callback(self, msg):
         """
@@ -82,8 +85,8 @@ class Thruster:
         self.cmd1_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
-            self.setPWM1(self.scale_input(self.direction1_ * self.cmd1_))
-        rospy.loginfo("Setting command %f" %msg.data)
+            self.setPWM1(self.scale_input(float(self.direction1_) * self.cmd1_))
+        rospy.loginfo("Setting command %f" % float(self.direction1_ * self.cmd1_))
 
     def timerCallback(self, event):
         """

@@ -10,7 +10,9 @@
 	</group>
 	
 	<group if="$(arg pressure)">
-		<node name="pressure" pkg="floatpi" type="pressure.py"/>
+		<node name="pressure" pkg="floatpi" type="pressure.py">
+			<param name="fluid_density" value="1000"/>
+		</node>
 	</group>
 	
 	<group if="$(arg imu)">
