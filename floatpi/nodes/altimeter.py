@@ -2,12 +2,12 @@
 
 from brping import Ping1D
 import rospy
-import sensor_msgs.msg import Range
+from sensor_msgs.msg import Range
 import numpy as np
 
 if __name__ == "__main__":
     rospy.init_node('pinger')
-    range_pub = rospy.Publisher('ping', Range(), queue_size=1)
+    range_pub = rospy.Publisher('ping', Range, queue_size=1)
     device = rospy.get_param("~device", "/dev/ttyAMA0")
     baudrate = rospy.get_param("~baudrate", 115200)
     sample_rate = rospy.get_param("~sample_rate", 10)

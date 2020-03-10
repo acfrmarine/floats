@@ -27,7 +27,7 @@ if __name__ == "__main__":
         exit(1)
 
     fluid_density = rospy.get_param('fluid_density', 1028)
-    fluid_density = rospy.get_param('fluid_density', 1000)
+    depth_offset = rospy.get_param('depth_offset', 0.0)
 
     r = rospy.Rate(10) # 10hz
     count = 0
@@ -36,6 +36,7 @@ if __name__ == "__main__":
             pressure = sensor.pressure()
             temp = sensor.temperature()
             depth = sensor.depth()
+            depth = depth - depth_offset
 
             pressure_msg = FluidPressure()
             pressure_msg.header.frame_id = 'pressure_sensor'
