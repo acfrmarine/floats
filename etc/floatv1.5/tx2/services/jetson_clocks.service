@@ -1,0 +1,10 @@
+
+[Unit]
+Description=Maximize Jetson Performance
+After=multi-user.target
+
+[Service]
+ExecStart=/bin/sh /usr/local/bin/start_jetson_clocks.sh
+
+[Install]
+WantedBy=multi-user.target
