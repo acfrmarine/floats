@@ -6,7 +6,7 @@ MACHINE=$2
 usage()
 {
   echo "Usage: ./install_services.sh PLATFORM MACHINE [--enable]"
-  echo "Available platforms: d3, floatv1"
+  echo "Available platforms: d3, floatv0.5 floatv1.5"
   echo "Available platforms: tx2, pi"
 }
 
@@ -33,7 +33,7 @@ fi
 
 
 operations="start stop enable disable status"
-sudo rm /etc/sudoers.d/floats
+sudo rm -f /etc/sudoers.d/floats
 
 # Install
 for service in $(ls etc/$PLATFORM/$MACHINE/services); do

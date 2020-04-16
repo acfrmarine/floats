@@ -7,12 +7,13 @@ TX2_UNUSED="third_party/vision_opencv floatpi"
 PI_UNUSED="third_party/avt_vimba_camera third_party/rtimulib_ros third_party/VINS-Fusion"
 COMMON_UNUSED="third_party/vision_opencv"
 D3_UNUSED="float_control"
-FLOATV1_UNUSED=""
+FLOATV05_UNUSED=""
+FLOATV15_UNUSED=""
 
 usage()
 {
   echo "Usage: ./configure.sh PLATFORM MACHINE"
-  echo "Available platforms: d3, floatv1, float"
+  echo "Available platforms: d3, floatv0.5, floatv1.5"
   echo "Available machines: tx2, pi, common"
 }
 
@@ -47,8 +48,10 @@ fi
 
 if [ "$PLATFORM" = "d3" ]; then
     UNUSED_PACKAGES="$UNUSED_PACKAGES $D3_UNUSED"
-elif [ "$PLATFORM" = "floatv1" ]; then
-    UNUSED_PACKAGES="$UNUSED_PACKAGES $FLOATV1_UNUSED"
+elif [ "$PLATFORM" = "floatv0.5" ]; then
+    UNUSED_PACKAGES="$UNUSED_PACKAGES $FLOATV05_UNUSED"
+elif [ "$PLATFORM" = "floatv1.5" ]; then
+    UNUSED_PACKAGES="$UNUSED_PACKAGES $FLOATV15_UNUSED"
 else
     echo "platform $PLATFORM not supported."
 fi
