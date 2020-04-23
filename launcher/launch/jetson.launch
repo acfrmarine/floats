@@ -11,7 +11,13 @@
 	
 	<!-- Start the IMU -->
 	<group if="$(arg tx2_imu)">
-		<include file="$(find rtimulib_ros)/launch/rtimulib_ros.launch"/>
+		<!-- <include file="$(find rtimulib_ros)/launch/rtimulib_ros.launch"/> -->
+
+		<node pkg="rtimulib_ros" type="rtimulib_ros" name="rtimulib_node" output="screen">
+        		<param name="calibration_file_path" value="$(find launcher)/config/imu/"/>
+        		<param name="calibration_file_name" value="RTIMULib" />
+        		<param name="frame_id" value="imu"/>
+    		</node>
 	</group>
 
 	<!-- TODO - vins funsion -->
