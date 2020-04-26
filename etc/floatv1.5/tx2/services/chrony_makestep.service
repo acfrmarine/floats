@@ -1,0 +1,10 @@
+[Unit]
+Description=update chrony time
+After=remote-fs.target
+After=syslog.target
+[Service]
+ExecStart=/usr/local/bin/chrony_makestep.sh
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
