@@ -20,7 +20,7 @@
     </include>
 
     <!-- Start the static depth controller -->
-    <node name="thruster_commander" pkg="float_control" type="static_command.py">
+    <node name="thruster_commander" pkg="float_control" type="static_command_topic.py">
     </node>
     <!-- Use static_depth by setting parameter set_thruster_command... -->
 
