@@ -4,7 +4,8 @@ from brping import Ping1D
 import rospy
 from sensor_msgs.msg import Range
 import numpy as np
-
+import floatpi.srv
+import std_srvs.srv
 
 class Altimeter:
     def __init__(self):
@@ -32,7 +33,7 @@ class Altimeter:
             rospy.logerr("Failed to initialize Ping")
             exit(1)
 
-        self.pinger.set_speed_of_sound(speed_of_sound)
+        self.pinger.set_speed_of_sound(int(speed_of_sound))
 
         if not self.auto_mode:
             self.pinger.set_mode_auto(0)
@@ -44,7 +45,7 @@ class Altimeter:
 
         self.set_range_service = rospy.Service('set_pinger_range', floatpi.srv.SetPingerRange, self.setRangeCallback)
         self.set_mode_service = rospy.Service('set_pinger_mode', std_srvs.srv.SetBool, self.setModeCallback)
-
+        print("Started services")
         rospy.Timer(rospy.Duration(1 / sample_rate), self.timerCallback)
 
     def setRangeCallback(self, req):
@@ -52,9 +53,9 @@ class Altimeter:
         self.range_max = req.range_max
         self.pinger.set_mode_auto(0)
         scan_length = (self.range_max - self.range_min) * 1000.0
-        self.pinger.set_range(self.range_min * 1000., scan_length)
+        self.pinger.set_range(int(self.range_min * 1000.), int(scan_length))
         rospy.loginfo("Setting pinger to auto mode - necessary for custom scan range")
-        rospy.loginfo("Setting scan range to [%f, %f] (m)" % self.range_min, self.range_max)
+        rospy.loginfo("Setting scan range to [%f, %f] (m)" % (self.range_min, self.range_max))
         res = floatpi.srv.SetPingerRangeResponse()
         res.success = True
         return res
@@ -68,6 +69,7 @@ class Altimeter:
         res = std_srvs.srv.SetBoolResponse()
         res.success = True
         res.message = "Set mode to %s" % mode
+        rospy.loginfo("Set pinger mode to %s" % mode)
         return res
 
 
@@ -80,56 +82,17 @@ class Altimeter:
             range_msg.header.stamp = rospy.Time.now()
             range_msg.header.frame_id = 'pinger'
             range_msg.header.seq = self.count
-            range_msg.field_of_view = field_of_view
+            range_msg.field_of_view = self.field_of_view
             range_msg.min_range = 0.5
             range_msg.max_range = 30.0
             range_msg.range = float(data["distance"])/1000.0
-            range_pub.publish(range_msg)
+            self.range_pub.publish(range_msg)
         else:
             rospy.loginfo("Failed to get distance data")
         self.count += 1
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
     rospy.init_node('pinger')
-    range_pub = rospy.Publisher('ping', Range, queue_size=1)
-    device = rospy.get_param("~device", "/dev/ttyAMA0")
-    baudrate = rospy.get_param("~baudrate", 115200)
-    sample_rate = rospy.get_param("~sample_rate", 10)
-
-    # Old initialisation...
-    #myPing = Ping1D(device, baudrate)
-
-    # New initialisation
-    myPing = Ping1D()
-    myPing.connect_serial(device, baudrate)
-    if myPing.initialize() is False:
-        rospy.logerr("Failed to initialize Ping")
-        exit(1)
-    count = 0
-    r = rospy.Rate(sample_rate)  # 100 Hz
-    field_of_view = 30 * np.pi / 180.0
-    # Read and print distance measurements with confidence
-    while True:
-        data = myPing.get_distance()
-
-        if data:
-            range_msg = Range()
-            range_msg.header.stamp = rospy.Time.now()
-            range_msg.header.frame_id = 'pinger'
-            range_msg.header.seq = count
-            range_msg.field_of_view = field_of_view
-            range_msg.min_range = 0.5
-            range_msg.max_range = 30.0
-            range_msg.range = float(data["distance"])/1000.0
-            range_pub.publish(range_msg)
-        else:
-            rospy.loginfo("Failed to get distance data")
-        count += 1
-        r.sleep()
+    alt = Altimeter()
+    rospy.spin()
