@@ -16,9 +16,9 @@ class UnifiedController:
     """
     def __init__(self):
         self.mode = 'thruster'  # Start off in thruster control mode
-        self.timeout = 0.0
+        self.timeout = rospy.Duration(0.0)
 
-        self.control_freq = rospy.get_param('control_freq', 5)
+        self.control_freq = rospy.get_param('control_freq', 5.0)
 
         self.thruster_set = 0.0
         self.depth_set = None
@@ -45,7 +45,6 @@ class UnifiedController:
 
         self.pidEnablePub = rospy.Publisher("pid_enable", Bool, queue_size=1)
 
-        rospy.Subscriber("altitude_target", Float64, self.targetCallback)
         rospy.Subscriber("depth", Float64, self.depthCallback)
         rospy.Subscriber("ping", Range, self.pingCallback)
 
@@ -71,7 +70,7 @@ class UnifiedController:
             self.pidEnablePub.publish(disable_msg)
             cmd_msg = Float64()
             cmd_msg.data = self.thruster_set
-            self.thrusterPub.publsh(cmd_msg)
+            self.thrusterPub.publish(cmd_msg)
         elif self.mode == "depth":
             if self.new_depth:
                 # Enable the PID controller
@@ -116,21 +115,21 @@ class UnifiedController:
             self.thruster_set = 0.0
 
     def thrusterCmdServiceCallback(self, req):
-        self.timeout = req.timeout
+        self.timeout = rospy.Duration(req.timeout)
         self.time0 = rospy.Time.now()
         self.mode = 'thruster'
         self.thruster_set = req.thruster_command
         return SetThrusterCommandResponse(True)
 
     def depthCmdServiceCallback(self, req):
-        self.timeout = req.timeout
+        self.timeout = rospy.Duration(req.timeout)
         self.time0 = rospy.Time.now()
         self.mode = 'depth'
         self.depth_set = req.depth_target
         return SetDepthTargetResponse(False)
 
     def altitudeCmdServiceCallback(self, req):
-        self.timeout = req.timeout
+        self.timeout = rospy.Duration(req.timeout)
         self.time0 = rospy.Time.now()
         self.mode = 'altitude'
         self.altitude_set = req.altitude_target
