@@ -74,6 +74,9 @@
                 <param name="gain_auto_target" value="10"/>
                 <param name="gain_auto_max" value="10"/>
 
+		<param name="sync_out_selector" value="SyncOut1"/>
+                <param name="sync_out_source" value="Exposing"/>
+
 		<param name="stream_bytes_per_second" value="90000000"/>
 	</node>
 	
