@@ -1,0 +1,4 @@
+float64 altitude_target
+float64 timeout
+---
+bool success
