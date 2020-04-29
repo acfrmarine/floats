@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from brping import Ping1D
 import rospy
@@ -12,7 +12,12 @@ if __name__ == "__main__":
     baudrate = rospy.get_param("~baudrate", 115200)
     sample_rate = rospy.get_param("~sample_rate", 10)
 
-    myPing = Ping1D(device, baudrate)
+    # Old initialisation...
+    #myPing = Ping1D(device, baudrate)
+
+    # New initialisation
+    myPing = Ping1D()
+    myPing.connect_serial(device, baudrate)
     if myPing.initialize() is False:
         rospy.logerr("Failed to initialize Ping")
         exit(1)
