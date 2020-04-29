@@ -4,7 +4,7 @@
 	<arg name="pressure" default="True"/>
 	<arg name="trigger" default="True"/>
 	<arg name="ups" default="True"/>
-	<arg name="ir_switch" default="True"/>	
+	<arg name="ir_switch" default="False"/>	
 	<arg name="altimeter" default="True"/>	
 	
 
