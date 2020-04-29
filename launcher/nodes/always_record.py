@@ -58,6 +58,10 @@ class RecordSwitch:
                           "/imu/data",
                           "/navio/imu",
                           "/depth",
+			  "/ping"
+                          "/depth_stamped",
+			  "/thruster_cmd",
+			  "/depth_target",
                           "/temperature",
                           "/navio/ups",
                           "/leak"]
