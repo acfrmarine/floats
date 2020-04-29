@@ -46,7 +46,7 @@
 		-->
 		<param name="pixel_format" value="BayerGR12"/>
 		<!-- Exposure in us -->
-		<param name="exposure" value="20138"/>
+		<param name="exposure" value="1500"/>
 		<!-- Gain in dB -->
 		<param name="gain" value="10"/>
 
@@ -55,7 +55,7 @@
 			2. Once
 			3. Continuous
 		-->
-		<param name="exposure_auto" value="On"/>
+		<param name="exposure_auto" value="Off"/>
 		<param name="gain_auto" value="Off"/>
 		<param name="whitebalance_auto" value="Off"/>
 
@@ -68,7 +68,7 @@
 		<param name="width" value="2464"/>
 		<param name="height" value="2056"/>
 
-		<param name="exposure_auto_max" value="8000"/>
+		<param name="exposure_auto_max" value="2500"/>
                 <param name="exposure_auto_min" value="100"/>
                 <param name="exposure_auto_target" value="10"/>
                 <param name="gain_auto_target" value="10"/>
