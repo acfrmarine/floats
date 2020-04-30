@@ -37,14 +37,14 @@ class ServoGPO:
 if __name__ == "__main__":
     rospy.init_node('camera_trigger_node')
     trigger_pub = rospy.Publisher('trigger', Bool, queue_size=1)
-    trigger_pin = rospy.get_param('~trigger_pin', 2)  # Corresponds to the Servo rails
-    trigger_rate = rospy.get_param('~trigger_rate', 0.1)  # in Hz. Defaults at 2Hz
+    trigger_pin = rospy.get_param('~trigger_pin', 1)  # Corresponds to the Servo rails
+    trigger_rate = rospy.get_param('~trigger_rate', 8.0)  # in Hz. Defaults at 2Hz
 
     sgpo = ServoGPO(trigger_pin)
     sgpo.initialise()
 
     r = rospy.Rate(trigger_rate) # hz
-    pulse_width = 5
+    pulse_width = 0.002
 
     while not rospy.is_shutdown():
         # Write output high
