@@ -153,6 +153,10 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
+add_executable(controller src/controller.cpp)
+target_link_libraries(controller ${catkin_LIBRARIES})
+add_dependencies(controller float_control_generate_messages_cpp)
+
 #############
 ## Install ##
 #############
