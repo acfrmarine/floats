@@ -1,0 +1,4 @@
+float64 thruster_command
+float64 timeout
+---
+bool success
