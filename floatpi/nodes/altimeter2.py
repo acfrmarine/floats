@@ -11,7 +11,7 @@ class Altimeter:
     def __init__(self):
         device = rospy.get_param("~device", "/dev/ttyAMA0")
         baudrate = rospy.get_param("~baudrate", 115200)
-        sample_rate = rospy.get_param("~sample_rate", 10.0)
+        sample_rate = rospy.get_param("~sample_rate", 5.0)
         speed_of_sound = rospy.get_param("~speed_of_sound", 1500.0)  # 1500m/s is the speed of sound in salt water, 1435 for fresh, 343 for air
 
         self.auto_mode = rospy.get_param("~auto_mode", True)
@@ -23,11 +23,11 @@ class Altimeter:
         self.field_of_view = 30 * np.pi / 180.0
 
         # Old initialisation...
-        # self.pinger = Ping1D(device, baudrate)
+        self.pinger = Ping1D(device, baudrate)
 
         # New initialisation
-        self.pinger = Ping1D()
-        self.pinger.connect_serial(device, baudrate)
+        #self.pinger = Ping1D()
+        #self.pinger.connect_serial(device, baudrate)
 
         if self.pinger.initialize() is False:
             rospy.logerr("Failed to initialize Ping")

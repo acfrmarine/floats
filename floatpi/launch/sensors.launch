@@ -6,7 +6,8 @@
 	<arg name="ups" default="True"/>
 	<arg name="ir_switch" default="False"/>	
 	<arg name="altimeter" default="True"/>	
-	
+	<arg name="process_compass" default="True"/>
+	<arg name="compass_calibration_file" default="/home/pi/compass_calibration.yaml"/>	
 
 	<group if="$(arg gps)">
 		<node name="gps" pkg="floatpi" type="gps.py"/>
@@ -40,6 +41,12 @@
 
 	<group if="$(arg altimeter)">
 		<node name="altimeter" pkg="floatpi" type="altimeter2.py">
+		</node>
+	</group>
+
+	<group if="$(arg process_compass)">
+		<node name="process_compass" pkg="floatpi" type="process_compass.py">
+			<rosparam command="load" file="$(arg compass_calibration_file)"/>
 		</node>
 	</group>
 
