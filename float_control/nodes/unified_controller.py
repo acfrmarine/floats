@@ -5,8 +5,9 @@ import argparse
 import sys
 import numpy as np
 import rospy
+import math
 from std_msgs.msg import Float32, Float64, Bool
-from sensor_msgs.msg import Range
+from sensor_msgs.msg import Range, MagneticField
 from float_control.srv import SetAltitudeTarget,SetAltitudeTargetResponse
 from float_control.srv import SetDepthTarget,SetDepthTargetResponse
 from float_control.srv import SetThrusterCommand,SetThrusterCommandResponse
@@ -35,6 +36,7 @@ class UnifiedController:
         self.new_altitude = False
         self.last_altitude_time = rospy.Time()
         self.last_depth_time = rospy.Time()
+        self.last_heading_time = rospy.Time()
         self.no_sensor_count = 0
 
         # Calculating the 2s lag value
