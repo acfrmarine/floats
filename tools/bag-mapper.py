@@ -37,46 +37,75 @@ def get_datum(bag, datum_str=None, datum_topic=None):
 
 
 def main(args):
-    results = {
-        "lat": [],
-        "lon": [],
-        "alt": []
-    }
+
+    results = {'x': [], 'y': [], 'z': [], "lat": [], "lon": [], "alt": []}
 
 
     for bagfile in args.bags:
         with Bag(bagfile, 'r') as input_bag:
-            datum_lat, datum_lon, datum_alt = get_datum(input_bag, args.datum, args.datum_topic)
+            if args.datum or args.datum_topic:
+                datum_lat, datum_lon, datum_alt = get_datum(input_bag, args.datum, args.datum_topic)
+            else:
+                datum_lat, datum_lon, datum_alt = None, None, None
+
             for topic, msg, time in input_bag.read_messages(topics=[args.topic]):
-                if isinstance(msg, NavSatFix):
+                if msg._type == "sensor_msgs/NavSatFix":
                     lat = msg.latitude
                     lon = msg.longitude
                     alt = msg.altitude
-                else:
-                    if isinstance(msg, Odometry):
-                        x = msg.pose.pose.position.x
-                        y = msg.pose.pose.position.y
-                        z = msg.pose.pose.position.z
-                    elif isinstance(msg, Pose):
-                        x = msg.position.x
-                        y = msg.position.y
-                        z = msg.position.z
-                    elif isinstance(msg, PoseStamped):
-                        x = msg.pose.position.x
-                        y = msg.pose.position.y
-                        z = msg.pose.position.z
-                    elif isinstance(msg, PoseWithCovariance):
-                        x = msg.pose.position.x
-                        y = msg.pose.position.y
-                        z = msg.pose.position.z
-                    elif isinstance(msg, PoseWithCovarianceStamped):
-                        x = msg.pose.pose.position.x
-                        y = msg.pose.pose.position.y
-                        z = msg.pose.pose.position.z
-                    lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    if datum_lat is None:
+                        datum_lat = lat
+                        datum_lon = lon
+                        datum_alt = alt
+                    x,y,z, = pymap3d.geodetic2enu(lat,lon,alt, datum_lat, datum_lon, datum_alt)
+
+                elif msg._type == "nav_msgs/Odometry":
+                    x = msg.pose.pose.position.x
+                    y = msg.pose.pose.position.y
+                    z = msg.pose.pose.position.z
+                    if not args.local:
+                        lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    else:
+                        lat, lon, alt = None, None, None
+                elif msg._type == "geometry_msgs/Pose":
+                    x = msg.position.x
+                    y = msg.position.y
+                    z = msg.position.z
+                    if datum_lat is not None:
+                        lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    else:
+                        lat, lon, alt = None, None, None
+                elif msg._type == "geometry_msgs/PoseStamped":
+                    x = msg.pose.position.x
+                    y = msg.pose.position.y
+                    z = msg.pose.position.z
+                    if datum_lat is not None:
+                        lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    else:
+                        lat, lon, alt = None, None, None
+                elif msg._type == "geometry_msgs/PoseWithCovariance":
+                    x = msg.pose.position.x
+                    y = msg.pose.position.y
+                    z = msg.pose.position.z
+                    if datum_lat is not None:
+                        lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    else:
+                        lat, lon, alt = None, None, None
+                elif msg._type == "geometry_msgs/PoseWithCovarianceStamped":
+                    x = msg.pose.pose.position.x
+                    y = msg.pose.pose.position.y
+                    z = msg.pose.pose.position.z
+                    if datum_lat is not None:
+                        lat, lon, alt = pymap3d.enu2geodetic(x,y,z,datum_lat, datum_lon, datum_alt)
+                    else:
+                        lat, lon, alt = None, None, None
                 results['lat'].append(lat)
                 results['lon'].append(lon)
                 results['alt'].append(alt)
+                results['x'].append(x)
+                results['y'].append(y)
+                results['z'].append(z)
+
 
         if args.output.endswith('.csv'):
             df = pd.DataFrame.from_dict(results)
