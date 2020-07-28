@@ -1,0 +1,9 @@
+float64 target_altitude
+float64 timeout
+float64 max_depth
+float64 delay
+bool use_bottom_time
+float64 bottom_time
+bool vary_altitude
+---
+bool success
