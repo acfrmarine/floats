@@ -79,19 +79,21 @@ class MissionConductor:
 
 
     def timerCallback(self, event):
-
         time_diff = rospy.Time.now() - self.time0
-        if self.mission_timeout is None:
+        if self.mission_timeout is None or self.on_mission is False:
             return
         if self.in_delay is True:
             if self.mission_delay is not None and self.mission_delay > 0.0:
-                time_left_of_delay = rospy.Duration(self.mission_delay) - self.time0
+                time_left_of_delay = rospy.Duration(self.mission_delay) - time_diff
                 if time_left_of_delay.to_sec() < 0.0:
-                    self.in_delay is False
+                    self.in_delay = False
+                    self.time0 = rospy.Time.now()
+                    rospy.loginfo("Pre-mission delay finished")
                 else:
                     rospy.loginfo("Pre-mission delay, time left = %f" % time_left_of_delay.to_sec())
                     return
 
+        time_diff = rospy.Time.now() - self.time0
         time_left = rospy.Duration(self.mission_timeout) - time_diff
         if time_left.to_sec() < 0.0:
             self.on_mission = False
@@ -121,6 +123,8 @@ class MissionConductor:
     def missionServiceCallback(self, req):
         self.mission_timeout = req.timeout
         self.mission_delay = req.delay
+        if self.mission_delay is not None and self.mission_delay > 0.0:
+            self.in_delay = True
         self.target_altitude = req.target_altitude
         self.max_depth = req.max_depth
         self.use_bottom_time = req.use_bottom_time
