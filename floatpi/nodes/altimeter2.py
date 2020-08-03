@@ -19,6 +19,7 @@ class Altimeter:
         self.range_max = rospy.get_param("~range_max", 30.0)
 
         self.range_pub = rospy.Publisher('ping', Range, queue_size=1)
+        self.out_of_range_pub = rospy.Publisher('ping_out_of_range', Bool, queue_size=1)
 
         self.field_of_view = 30 * np.pi / 180.0
 
@@ -88,6 +89,9 @@ class Altimeter:
             range_msg.range = float(data["distance"])/1000.0
             self.range_pub.publish(range_msg)
         else:
+            oar_msg = Bool()
+            oar_msg.data = True
+            self.out_of_range_pub.publish(oar_msg)
             rospy.loginfo("Failed to get distance data")
         self.count += 1
 
