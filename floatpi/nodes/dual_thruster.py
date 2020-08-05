@@ -24,6 +24,8 @@ class Thruster:
         self.time_min_ = rospy.get_param("~time_min",1.00)
         self.prime_required_ = rospy.get_param("~prime",True)
 
+        self.max_change = rospy.get_param("~max_change", 0.04)
+
         self.timeout_ = rospy.get_param("~timeout", 2.0)
         control_cmd_topic0 = rospy.get_param("~control_cmd_topic0", "thruster0_cmd")  # Sometimes easier doing this than remapping
         control_cmd_topic1 = rospy.get_param("~control_cmd_topic1", "thruster1_cmd")  # Sometimes easier doing this than remapping
@@ -55,6 +57,8 @@ class Thruster:
 
         self.cmd0_ = 0.0
         self.cmd1_ = 0.0
+        self.prev_cmd0_ = 0.0
+        self.prev_cmd1_ = 0.0
         self.last_received_cmd_ = rospy.Time.now()
 
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
@@ -71,7 +75,8 @@ class Thruster:
         self.go = True
         self.cmd0_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
-        if self.go and self.primed:
+        if self.go and self.primed: 
+            self.cmd0_, self.prev_cmd0_ = self.limit_change(self.cmd0_, self.prev_cmd0_)
             self.setPWM0(self.scale_input(float(self.direction0_) * self.cmd0_))
         rospy.loginfo("Setting command %f" % float(self.direction0_ * self.cmd0_))
 
@@ -85,8 +90,20 @@ class Thruster:
         self.cmd1_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
+            self.cmd1_, self.prev_cmd1_ = self.limit_change(self.cmd1_, self.prev_cmd1_)
             self.setPWM1(self.scale_input(float(self.direction1_) * self.cmd1_))
         rospy.loginfo("Setting command %f" % float(self.direction1_ * self.cmd1_))
+
+    
+    def limit_change(self, cmd, prev_cmd):
+        if cmd - prev_cmd > self.max_change:
+            cmd = prev_cmd + self.max_change
+        elif cmd - prev_cmd < -self.max_change:
+            cmd = prev_cmd - self.max_change
+            #rospy.loginfo("cmd: %f, prev_cmd: %f" %(cmd, prev_cmd))
+        prev_cmd = cmd
+        return cmd, prev_cmd
+    
 
     def timerCallback(self, event):
         """

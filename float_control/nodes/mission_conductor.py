@@ -35,6 +35,9 @@ class MissionConductor:
         self.altitude = None
         self.time0 = rospy.Time.now()
 
+        self.altitude_lock = False
+        self.out_of_range = False
+
         self.vary_altitude_sign = 1
         self.vary_altitude_count = 0
 
@@ -44,6 +47,7 @@ class MissionConductor:
         rospy.Subscriber("/depth", Float64, self.depthCallback)
         rospy.Subscriber("/ping", Range, self.pingCallback)
         rospy.Subscriber("/depth_target", Float64, self.depthTargetCallback)
+        rospy.Subscriber("/ping_out_of_range", Bool, self.outofrangeCallback)
 
         rospy.Timer(rospy.Duration(1.0), self.timerCallback)
 
@@ -106,8 +110,9 @@ class MissionConductor:
                 self.set_target_depth(self.max_depth, time_left.to_sec())
                 self.at_max_depth = False
             else:
-                if self.vary_altitude:
-
+                if not self.altitude_lock and self.out_of_range:
+                    self.set_target_depth(self.depth_target+2.0, time_left.to_sec())
+                elif self.vary_altitude:
                     if self.vary_altitude_count % 10 == 0:
                         if self.vary_altitude_sign == 1:
                             self.set_target_altitude(self.target_altitude+0.5, time_left.to_sec())
@@ -142,13 +147,15 @@ class MissionConductor:
     def depthTargetCallback(self, msg):
         self.depth_target = msg.data
 
-
-
     def depthCallback(self, msg):
         self.depth = msg.data
 
     def pingCallback(self, msg):
+        self.altitude_lock = True
         self.altitude = msg.range
+
+    def outofrangeCallback(self,msg):
+        self.out_of_range = True
 
 if __name__ == "__main__":
     rospy.init_node('conductor', anonymous=True)
