@@ -5,6 +5,7 @@ import pymap3d
 import rospy
 from sensor_msgs.msg import NavSatFix
 from std_msgs.msg import Float64
+import math
 
 class Orientor:
     def __init__(self):
@@ -17,13 +18,14 @@ class Orientor:
 
         rospy.Subscriber("/navio/gps", NavSatFix, self.gpsCallback)
 
-        rospy.Timer(rospy.Duration(10.0), self.gpsCallback)
+        rospy.Timer(rospy.Duration(10.0), self.timerCallback)
 
     def gpsCallback(self, msg):
         self.got_gps = True
-        north,east,down = pymap3d.geodetic2ned(msg.latitude, msg.longitude, 0.0, lat0=self.tgt_lat, lon0=self.tgt_lon, h0=0.0)
-        theta = np.atan2(0.0 - north, 0.0 - east)
-        heading = theta * np.pi / 180.0
+        east,north,up = pymap3d.geodetic2enu(msg.latitude, msg.longitude, 0.0, lat0=self.tgt_lat, lon0=self.tgt_lon, h0=0.0)
+        theta = math.atan2(0.0 - north, 0.0 - east)
+        heading_r = -theta + np.pi/2
+        heading = heading_r * 180.0 / np.pi
         dist = np.sqrt(north**2 + east**2)
         dist_msg = Float64()
         dist_msg.data = dist
@@ -31,12 +33,14 @@ class Orientor:
         heading_msg.data = heading
         self.headingPub.publish(heading_msg)
         self.distancePub.publish(dist_msg)
-        print("Heading: %f, Distance: %f")
+        rospy.loginfo("Heading: %f, Distance: %f" %(heading, dist))
 
         # east,north,up = pymap3d.geodetic2enu(msg.latitude, msg.longitude, 0.0, lat0=self.tgt_lat, lon0=self.tgt_lon, h0=0.0)
         # theta = np.atan2(0.0 - east, 0.0 - north)
 
-
+    def timerCallback(self, event):
+        if not self.got_gps:
+            rospy.loginfo("No GPS found yet")
 
 
 if __name__ == "__main__":
