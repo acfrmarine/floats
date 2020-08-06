@@ -41,6 +41,10 @@ class MissionConductor:
         self.vary_altitude_sign = 1
         self.vary_altitude_count = 0
 
+        self.min_depth = rospy.get_param("~min_depth", 0.0)  # TODO remove this
+        if self.min_depth > 0.0:
+            rospy.logwarn("Minimum depth set to %f, use with caution" %(self.min_depth))
+
         self.mission_service = rospy.Service('send_mission', SendMission, self.missionServiceCallback)
         self.abort_service = rospy.Service('abort_mission', Empty, self.abortServiceCallback)
 
@@ -107,8 +111,10 @@ class MissionConductor:
             return
         else:
             if self.depth >= self.max_depth:  # Check if at the max depth
-                self.set_target_depth(self.max_depth, time_left.to_sec())
+                # self.set_target_depth(self.max_depth, time_left.to_sec())
                 self.at_max_depth = False
+                self.on_mission = False
+                self.send_zero()
             else:
                 if not self.altitude_lock and self.out_of_range:
                     self.set_target_depth(self.depth_target+2.0, time_left.to_sec())
@@ -121,6 +127,8 @@ class MissionConductor:
                             self.set_target_altitude(self.target_altitude, time_left.to_sec())
                             self.vary_altitude_sign = 0
                     self.vary_altitude_count += 1
+                elif self.min_depth > 0.0 and self.depth + self.altitude - self.target_altitude < self.min_depth: # TODO remove this - specifically for Cairns seamount mission
+                    self.set_target_depth(self.min_depth, time_left.to_sec())
                 else:
                     self.set_target_altitude(self.target_altitude, time_left.to_sec())
 
