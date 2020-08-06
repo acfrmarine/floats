@@ -25,6 +25,7 @@ class Thruster:
         self.time_max_ = rospy.get_param("~time_max",2.00)# in ms
         self.time_min_ = rospy.get_param("~time_min",1.00)
         self.prime_required_ = rospy.get_param("~prime",True)
+        self.max_change = rospy.get_param("~max_change", 0.005)
 
         self.timeout_ = rospy.get_param("~timeout", 2.0)
         control_cmd_topic = rospy.get_param("~control_cmd_topic", "thruster_cmd")  # Sometimes easier doing this than remapping
@@ -42,6 +43,7 @@ class Thruster:
             self.prime_esc()
 
         self.cmd_ = 0.0
+        self.prev_cmd_ = 0.0
         self.last_received_cmd_ = rospy.Time.now()
 
         # Create safety timer - if new cmd isn't received every timeout seconds, turn thruster off
@@ -58,8 +60,19 @@ class Thruster:
         self.cmd_ = msg.data
         self.last_received_cmd_ = rospy.Time.now()
         if self.go and self.primed:
+            self.cmd_ = self.limit_change(self.cmd_)
+            self.prev_cmd_ = self.cmd_
             self.setPWM(self.scale_input(self.direction_ * self.cmd_))
-        rospy.loginfo("Setting command %f" %msg.data)
+            rospy.loginfo("Setting command %f" %self.cmd_)
+
+    def limit_change(self, cmd):
+        if cmd - self.prev_cmd_ > self.max_change:
+            cmd = self.prev_cmd_ + self.max_change
+        elif cmd - self.prev_cmd_ < -self.max_change:
+            cmd = self.prev_cmd_ - self.max_change
+        rospy.loginfo("cmd: %f, prev_cmd: %f" %(self.cmd, self.prev_cmd))
+        return cmd
+
 
     def timerCallback(self, event):
         """

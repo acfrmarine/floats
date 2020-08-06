@@ -6,6 +6,8 @@ from sensor_msgs.msg import Range
 import numpy as np
 import floatpi.srv
 import std_srvs.srv
+from std_msgs.msg import Bool
+from float_msgs.msg import PingRange
 
 class Altimeter:
     def __init__(self):
@@ -19,6 +21,8 @@ class Altimeter:
         self.range_max = rospy.get_param("~range_max", 30.0)
 
         self.range_pub = rospy.Publisher('ping', Range, queue_size=1)
+        self.ping_pub = rospy.Publisher('altimeter', PingRange, queue_size=1)
+        self.out_of_range_pub = rospy.Publisher('ping_out_of_range', Bool, queue_size=1)
 
         self.field_of_view = 30 * np.pi / 180.0
 
@@ -87,7 +91,19 @@ class Altimeter:
             range_msg.max_range = 30.0
             range_msg.range = float(data["distance"])/1000.0
             self.range_pub.publish(range_msg)
+
+            ping_msg = PingRange()
+            ping_msg.header = range_msg.header
+            ping_msg.field_of_view = range_msg.field_of_view
+            ping_msg.min_range = range_msg.min_range
+            ping_msg.max_range = range_msg.max_range
+            ping_msg.range = range_msg.range
+            ping_msg.confidence = data['confidence']/100.0
+            self.ping_pub.publish(ping_msg)
         else:
+            oar_msg = Bool()
+            oar_msg.data = True
+            self.out_of_range_pub.publish(oar_msg)
             rospy.loginfo("Failed to get distance data")
         self.count += 1
 
