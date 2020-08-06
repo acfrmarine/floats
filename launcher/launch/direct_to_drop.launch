@@ -1,0 +1,6 @@
+<launch>
+    <node name="orientor" pkg="launcher" type="direct_to_drop.py">
+        <param name="~latitude" value="-16.515004"/>
+        <param name="~longitude" value="147.166998"/>
+    </node>
+</launch>
