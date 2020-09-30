@@ -44,6 +44,7 @@ class UnifiedController:
         self.depths_list = []
 
         self.time0 = rospy.Time.now()
+        self.timeout = 0.0
 
         self.thruster_cmd_service = rospy.Service('set_thruster_command', SetThrusterCommand, self.thrusterCmdServiceCallback)
         self.depth_cmd_service = rospy.Service('set_depth_target', SetDepthTarget, self.depthCmdServiceCallback)
